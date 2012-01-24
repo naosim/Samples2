@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" /><title></title>
+<meta name="Keywords"  content="JavaScript,HTML5,CSS" />
+
+<!-- CSS -->
+<style type="text/css">
+body {
+    Color: #ffffff;
+    background-color: #323232;
+    font: 30px sans-serif;
+}
+.taskTable {
+}
+.task {
+	width: 40px;
+}
+
+</style></head>
+<body>
+<!-- HTML -->
+<table width="100%" border="1px">
+	<tr><th width="30%">TODO</th><th width="30%">DOING</th><th width="30%">DONE</th></tr>
+	<tr>
+		<td id="todoTable" class="taskTable">
+			<div id="hoge" class="task" draggable="true" ondragstart="f_dragstart(event)">a</div>
+			<div style="cursor: pointer" onclick="pressedAddButton()">+ ADD</div>
+		</td>
+		<td id="doingTable" class="taskTable">b</td>
+		<td id="doneTable" class="taskTable">c</td>
+	</tr>
+</table>
+<!-- javascript -->
+<script type="text/javascript">
+/**
+ * テーブルの内容を管理するオブジェクト
+ * それぞれの配列にタスクIDを持つ
+ */
+var tableData = {
+	todos:new Array(),
+	doings:new Array(),
+	dones:new Array()
+};
+/**
+ * タスク
+ * id, name, todoDate, doingDate, doneDate, state
+ */
+var tasks = new Array();
+/**
+ * DBからテーブルデータをロードする
+ */
+var loadTable = function() {
+	
+};
+/**
+ * DBへテーブルデータをセーブする
+ */
+var saveTable = function(tableData) {
+	
+};
+
+var loadTask = function() {
+	
+};
+
+var saveTask = function(task) {
+	
+}
+
+/**
+ * タスクを追加する
+ * DOMからタスク名を抽出して、新しいタスクを生成する
+ * DOMのエディットモードを終了する
+ */
+var addTask = function() {
+	
+};
+
+/**
+ * タスク追加ボタンが押された
+ * DOMに新しいタスク領域を追加する
+ * タスク領域はエディットモードにする
+ */
+var pressedAddButton = function() {
+	var elm = createTaskElm();
+	var todoTable = document.getElementById('todoTable');
+	todoTable.appendChild(elm);
+};
+
+var createTaskElm = function() {
+	var input = document.createElement();
+	
+	var elm = document.createElement('div');
+	elm.className = 'task';
+	elm.innerText = 'new task';
+	elm.id = new Date().getTime();
+	elm.draggable = 'true';
+	elm.addEventListener('dragstart', f_dragstart);
+	return elm;
+}
+
+/***** ドラッグ開始時の処理 *****/
+function f_dragstart(event){
+	//ドラッグするデータのid名をDataTransferオブジェクトにセット
+	event.dataTransfer.setData("text", event.target.id);
+}
+
+/***** ドラッグ要素がドロップ要素に重なっている間の処理 *****/
+function f_dragover(event){
+	//dragoverイベントをキャンセルして、ドロップ先の要素がドロップを受け付けるようにする
+	event.preventDefault();
+}
+
+/***** ドロップ時の処理 *****/
+function f_drop(event){
+	//ドラッグされたデータのid名をDataTransferオブジェクトから取得
+	var id_name = event.dataTransfer.getData("text");
+	//id名からドラッグされた要素を取得
+	var drag_elm =document.getElementById(id_name);
+	//ドロップ先にドラッグされた要素を追加
+	event.currentTarget.appendChild(drag_elm);
+    //エラー回避のため、ドロップ処理の最後にdropイベントをキャンセルしておく
+	event.preventDefault();
+}
+
+var onload = function() {
+	taskTables = document.getElementsByClassName('taskTable');
+	for(var i = 0; i < taskTables.length; i++) {
+		taskTables[i].addEventListener('dragover', f_dragover);
+		taskTables[i].addEventListener('drop', f_drop);
+	}
+};
+
+</script>
+</body>
+</html>

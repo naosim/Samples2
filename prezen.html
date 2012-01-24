@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" /><title></title>
+<meta name="Keywords"  content="JavaScript,HTML5,CSS" />
+
+<!-- CSS -->
+<style type="text/css">
+* {
+	padding: 0px;
+	margin: 0px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
+	box-sizing: border-box;
+}
+html {
+	height: 100%;
+}
+body {
+    font: 30px sans-serif;
+    width: 200%;
+    height:100%;
+    overflow:hidden;
+}
+
+.page {
+	width:100%;
+	min-height:100%;
+	height:auto !important;
+	height:100%;
+	position:absolute;
+
+	-webkit-transition-property: left, opacity, text-shadow;
+	-webkit-transition-duration: 0.35s;
+	-webkit-transition-timing-function: ease-in-out;
+	
+	-moz-transition-property: left, opacity, text-shadow;
+	-moz-transition-duration: 0.35s;
+	-moz-transition-timing-function: ease-in-out;
+	
+	display:block;
+	left:100%;
+	z-index:0;
+	page-break-after: always;
+}
+.pause {
+	-webkit-transition-property: left, opacity, text-shadow;
+	-webkit-transition-duration: 0.35s;
+	-webkit-transition-timing-function: ease-in-out;
+	
+	-moz-transition-property: left, opacity, text-shadow;
+	-moz-transition-duration: 0.35s;
+	-moz-transition-timing-function: ease-in-out;
+	
+	opacity:0;
+}
+.visible {
+	opacity:100;
+}
+.current {
+	left: 0%;
+	opacity:100;
+}
+
+.back {
+	left: -100%;
+}
+.c {
+	width:100%;
+	padding:4px;
+	position:fixed;
+	z-index: 20;
+	bottom:0px;
+	background-color: rgba(0,0,0,0.5);
+}
+
+.printBody {
+	width:100%;
+	overflow:visible;
+}
+.printPage {
+	position:static;
+	float:none;
+	opacity:100;
+}
+.print {
+	opacity:100;
+}
+/* スタイル */
+body {
+	color: #FFF;
+	background: -moz-linear-gradient(top, #990, #066);
+	background: -webkit-gradient(linear, left top, left bottom, from(#990), to(#066));
+
+}
+.page {
+	padding: 12px;
+}
+.printPage {
+	border-style: solid;
+	border-width: 1px;
+}
+.button {
+    background-color: #5b5b5b;
+    font-size: 12pt;
+    text-align: center;
+    color: #ffffff;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 12px;
+    padding-right: 12px;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-style: solid;
+    border-width: 1px;
+    border-top-color: #7d7d7d;
+    border-left-color: #5b5b5b;
+    border-right-color: #5b5b5b;
+    border-bottom-color:#424242;
+}
+.button:hover {
+    background-color: #31a3cc;
+    border-top-color: #68bcda;
+    border-left-color: #31a3cc;
+    border-right-color: #31a3cc;
+    border-bottom-color: #2780a0;
+    box-shadow: 0px 0px 0px 4px rgba(065, 177, 213, 0.5);
+}
+h1 {
+}
+</style></head>
+<body>
+<!-- HTML -->
+<div class="page pause">
+	<h1>HTMLでプレゼンしよう。</h1>
+</div>
+<div class="page pause">
+	<h1>操作 クリック</h1>
+	[next]をクリックすると次へ。<br>
+	[back]をクリックすると前へ。<br>
+</div>
+<div class="page pause">
+	<h1>操作 キー</h1>
+	右キーを押すと次へ。<br>
+	左キーを押すと前へ。<br>
+</div>
+<div class="page pause">
+	<h1>操作</h1>
+	右を押すごとに、テキストを段階的に出すこともできる
+	<div class="pause">ほげほげ</div>
+	<div class="pause">ふーふー</div>
+</div>	
+<div class="page pause">
+	<h1>おしまい。</h1>
+</div>
+<div class="c">
+	<span class="button" id="prezen">プレゼンモード</span> <span class="button" id="print">印刷モード</span> <span class="button" id="back">back</span> <span class="button" id="next">next</span>
+</div>
+
+<!-- javascript -->
+<script type="text/javascript">
+// Elements
+HTMLElement.prototype.getClassNames = function() {
+	return this.className.split(' ');
+};
+HTMLElement.prototype.hasClassName = function(className) {
+	var classNames = this.getClassNames();
+	var hasClass = false;
+	for(var i = 0; i < classNames.length; i++) {
+		if(classNames[i] == className) {
+			hasClass = true;
+			break;
+		}
+	}
+	return hasClass;
+};
+HTMLElement.prototype.addClassName = function(className) {
+	if(!this.hasClassName(className)) {
+		this.className += ' ' + className;
+	}
+};
+HTMLElement.prototype.removeClassName = function(className) {
+	if(this.hasClassName(className)) {
+		var classNames = this.getClassNames();
+		this.className = '';
+		for(var i = 0; i < classNames.length; i++) {
+			if(classNames[i] != className) {
+				if(this.className.length > 0) {
+					this.className += ' ';
+				}
+				this.className += classNames[i];
+			}
+		}
+	}
+};
+
+// Prezenライブラリ
+P = {};
+P.pauses = {};
+P.back = function() {
+	P.setPause(P.numPause - 1);
+};
+P.next = function() {
+	P.setPause(P.numPause + 1);
+};
+P.setPause = function(p) {
+	// 前条件
+	if(p < 0 || p >= P.pauses.length) {
+		return;
+	}
+	
+	P.numPause = p;
+	
+	var isBack = 0;
+	for(var i = P.pauses.length - 1; i >= 0; i--) {
+		var pause = P.pauses[i];
+		if(pause.hasClassName('page')) {
+			if(i > p) {
+				pause.removeClassName('current');
+				pause.removeClassName('back');
+			}
+			else {
+				if(isBack) {
+					pause.removeClassName('current');
+					pause.addClassName('back');
+				}
+				else {
+					pause.addClassName('current');
+					pause.removeClassName('back');
+					isBack = true;
+				}
+			}
+		}
+	}
+	
+	for(var i = 0; i < P.pauses.length; i++) {
+		var pause = P.pauses[i];
+		if(i <= p) {
+			pause.addClassName('visible');
+		}
+		else if(i > p) {
+			pause.removeClassName('visible');
+		}
+	}
+};
+P.print = function() {
+	document.getElementsByTagName('body')[0].addClassName('printBody');
+	for(var i = 0; i < P.pauses.length; i++) {
+		var pause = P.pauses[i];
+		if(pause.hasClassName('page')) {
+			pause.addClassName('printPage');
+		}
+		else {
+			pause.addClassName('print');
+		}
+	}
+};
+P.prezen = function() {
+	document.getElementsByTagName('body')[0].removeClassName('printBody');
+	for(var i = 0; i < P.pauses.length; i++) {
+		var pause = P.pauses[i];
+		if(pause.hasClassName('page')) {
+			pause.removeClassName('printPage');
+		}
+		else {
+			pause.removeClassName('print');
+		}
+	}
+};
+window.onload = function() {
+	P.pauses = document.getElementsByClassName('pause');
+	P.setPause(0);
+	document.getElementById('back').addEventListener('click', P.back);
+	document.getElementById('next').addEventListener('click', P.next);
+	document.onkeydown = function(e) {
+		if(e.keyIdentifier == 'Left') {
+			P.back();
+		}
+		else if(e.keyIdentifier == 'Right') {
+			P.next();
+		}
+	};
+	
+	document.getElementById('print').addEventListener('click', P.print);
+	document.getElementById('prezen').addEventListener('click', P.prezen);
+};
+	
+</script>
+</body>
+</html>
