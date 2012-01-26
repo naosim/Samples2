@@ -78,8 +78,38 @@ body {
 	-moz-border-radius: 10px;
 }
 
-
-
+#profile {
+	position:fixed;
+	width:300px;
+	height:300px;
+	left:64px;
+	top:64px;
+	background-color:#EEE;
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	font-size: 12px;
+	padding: 8px;
+}
+#popup {
+	position:fixed;
+	left:0px;
+	top:0px;
+	z-index:99;
+	padding:0px;
+	margin:0px;
+	width:100%;
+	height:100%;
+	background-color: rgba(0,0,0,0.5);
+	display: none;
+}
+#infoLink {
+	width:64px;
+	margin: 12px;
+	color:#F58;
+	font-size: 14px;
+	cursor: pointer;
+}
 .deleteButton {
 	position:absolute;
 	right:8px;
@@ -90,6 +120,14 @@ body {
 #addTaskBox {
 	padding: 4px;
 	font-size: 18pt;
+}
+
+.close {
+	position:absolute;
+	right:8px;
+	bottom:8px;
+	width:58px;
+	cursor: pointer;
 }
 </style></head>
 <body>
@@ -104,6 +142,26 @@ body {
 		<td id="doneTable" class="taskTable"></td>
 	</tr>
 </table>
+<!--shinobi1-->
+<script type="text/javascript" src="http://x8.ninpou.jp/ufo/141201204"></script>
+<noscript><a href="http://x8.ninpou.jp/bin/gg?141201204" target="_blank">
+<img src="http://x8.ninpou.jp/bin/ll?141201204" border="0"></a><br>
+<span style="font-size:9px"><img style="margin:0;vertical-align:text-bottom;" src="http://img.shinobi.jp/tadaima/fj.gif" width="19" height="11"> <a href="http://credit_card.rentalurl.net/" target="_blank">キャッシング</a></span></noscript>
+<!--shinobi2-->
+<div id="infoLink" onclick="info();">作者情報</div>
+<div id="popup">
+<div id="profile">
+■作者情報<br>
+name : ナオシム<br>
+twitter : @naosim_<br> 
+blog : <a href="http://naosim.blog16.fc2.com/" target="_blank">http://naosim.blog16.fc2.com/</a><br>
+PR : <br>
+Developping iPhone Application and Web Site in Niigata Japan.<br>
+I was born in 1982.<br>
+The pillows fan.<br>
+<div class="close" onclick="info();">[x 閉じる]</div>
+</div>
+</div>
 <!-- javascript -->
 <script type="text/javascript">
 /**
@@ -311,6 +369,15 @@ var pressedDeleteButton = function() {
 	elm.parentElement.removeChild(elm);
 };
 
+var info = function() {
+	var popup = document.getElementById('popup');
+	if(popup.style.display == 'block') {
+		popup.style.display = 'none';
+	}
+	else {
+		popup.style.display = 'block';
+	}
+};
 </script>
 </body>
 </html>
