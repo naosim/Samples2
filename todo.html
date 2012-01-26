@@ -6,40 +6,104 @@
 
 <!-- CSS -->
 <style type="text/css">
+* {
+	padding-top:0px;
+	margin:0px;
+}
 body {
-    Color: #ffffff;
-    background-color: #323232;
+    color: #444;
+    background-color: #EEE;
     font: 30px sans-serif;
 }
-.taskTable {
+.header {
+	padding: 4px;
+	width: 100%;
+	color: #EEE;
+	background-color: #666;
+	position: fixed;
+	z-index:10;
 }
+.headerMargin {
+	height: 64px;
+}
+.baseTable {
+	height: 200px;
+	width: 99%;
+	border-collapse:collapse;
+	border-color: #888;
+	border-width: 1px;
+	border-spacing: 0px;
+	border-style: solid;
+	margin: 4px;
+}
+.tableHeader {
+	height: 32px;
+}
+.taskTable {
+	background-color:#FFF;
+	border-top-color: #888;
+	border-bottom-color: #CCC;
+	border-top-width: 2px;
+	border-spacing: 0px;
+	border-style: solid;
+}
+/*
 .task {
-	margin:2px;
+	margin:4px;
+	padding:12px;
 	width: 90%;
 	font-size:18pt;
-	background-color:#035;
+	color: #333;
+	background-color:#EEE;
 	cursor: move;
 }
+*/
+.task {
+	color: #333;
+    width: 280px;
+    min-height: 100px;
+    margin: 25px auto;
+    padding: 15px;
+    background: #f1f3a2;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(247,247,210,1)), to(rgba(240,242,155,1)));
+    background: -moz-linear-gradient(top, rgba(247,247,210,1), rgba(240,242,155,1));
+    -webkit-box-shadow: 0 2px 12px rgba(0,0,0,.5);
+    -moz-box-shadow: 0 2px 12px (rgba(0,0,0.5));
+    box-shadow: 0 1px 2px #000;
+    -webkit-transform: rotate(-.5deg);
+    -moz-transform: rotate(-.5deg);
+    -o-transform: rotate(-.5deg);
+    border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+}
+
+
+
 .deleteButton {
+	position:absolute;
+	right:8px;
+	bottom:0px;
+	width:26px;
 	cursor: pointer;
 }
 #addTaskBox {
-	padding: 8px;
+	padding: 4px;
 	font-size: 18pt;
 }
 </style></head>
 <body>
 <!-- HTML -->
-<div>タスクかんばん</div>
-<table width="100%" border="1px">
-	<tr><th width="30%">TODO</th><th width="30%">DOING</th><th width="30%">DONE</th></tr>
+<div class="header">タスクかんばん    タスク追加：<input id="addTaskBox" type="text" /></div>
+<div class="headerMargin"></div>
+<table width="100%" border="1px" class="baseTable">
+	<tr class="tableHeader"><th width="30%">TODO</th><th width="30%">DOING</th><th width="30%">DONE</th></tr>
 	<tr>
 		<td id="todoTable" class="taskTable"></td>
 		<td id="doingTable" class="taskTable"></td>
 		<td id="doneTable" class="taskTable"></td>
 	</tr>
 </table>
-<input id="addTaskBox" type="text" />
 <!-- javascript -->
 <script type="text/javascript">
 /**
@@ -127,6 +191,8 @@ var pressedAddButton = function() {
 	};
 	addTaskToTable(task, 'todoTable');
 	tableData.todos.push(task);
+	
+	document.getElementById('addTaskBox').value = '';
 	
 	saveData();
 };
