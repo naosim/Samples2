@@ -14,23 +14,32 @@ body {
 .taskTable {
 }
 .task {
-	width: 40px;
+	margin:2px;
+	width: 90%;
+	font-size:18pt;
+	background-color:#035;
+	cursor: move;
 }
-
+.deleteButton {
+	cursor: pointer;
+}
+#addTaskBox {
+	padding: 8px;
+	font-size: 18pt;
+}
 </style></head>
 <body>
 <!-- HTML -->
+<div>タスクかんばん</div>
 <table width="100%" border="1px">
 	<tr><th width="30%">TODO</th><th width="30%">DOING</th><th width="30%">DONE</th></tr>
 	<tr>
-		<td id="todoTable" class="taskTable">
-			<div id="hoge" class="task" draggable="true" ondragstart="f_dragstart(event)">a</div>
-			<div style="cursor: pointer" onclick="pressedAddButton()">+ ADD</div>
-		</td>
-		<td id="doingTable" class="taskTable">b</td>
-		<td id="doneTable" class="taskTable">c</td>
+		<td id="todoTable" class="taskTable"></td>
+		<td id="doingTable" class="taskTable"></td>
+		<td id="doneTable" class="taskTable"></td>
 	</tr>
 </table>
+<input id="addTaskBox" type="text" />
 <!-- javascript -->
 <script type="text/javascript">
 /**
@@ -50,31 +59,56 @@ var tasks = new Array();
 /**
  * DBからテーブルデータをロードする
  */
-var loadTable = function() {
-	
+var loadData = function() {
+	var str = localStorage.tableData;
+	if(str) {
+		tableData = JSON.parse(str);
+	}
 };
 /**
  * DBへテーブルデータをセーブする
  */
-var saveTable = function(tableData) {
-	
+var saveData = function() {
+	localStorage.tableData = JSON.stringify(tableData);
 };
 
 var loadTask = function() {
 	
 };
 
-var saveTask = function(task) {
-	
-}
+var removeTask = function(task) {
+	var oldData = tableData;
+	tableData = {
+		todos:new Array(),
+		doings:new Array(),
+		dones:new Array()
+	};
+	for(var key in oldData) {
+		var tableId = dataKeyToTableId(key);
+		for(var i = 0; i < oldData[key].length; i++) {
+			var t = oldData[key][i];
+			if(t.id != task.id) {
+				tableData[key].push(t);
+			}
+		}
+	}
+};
 
 /**
  * タスクを追加する
  * DOMからタスク名を抽出して、新しいタスクを生成する
  * DOMのエディットモードを終了する
  */
-var addTask = function() {
+var addTaskToTable = function(task, tableId) {
+	var elm = createTaskElm(task);
 	
+	document.getElementById(tableId).appendChild(elm);
+};
+
+var onKey = function(e){
+	if(e.keyCode == 13) {
+		pressedAddButton();
+	}
 };
 
 /**
@@ -83,22 +117,69 @@ var addTask = function() {
  * タスク領域はエディットモードにする
  */
 var pressedAddButton = function() {
-	var elm = createTaskElm();
-	var todoTable = document.getElementById('todoTable');
-	todoTable.appendChild(elm);
+	var task = {
+		id:new Date().getTime(),
+		name:document.getElementById('addTaskBox').value,
+		state:0,
+		todoDate:new Date().getTime(),
+		doingDate:-1,
+		doneDate:-1
+	};
+	addTaskToTable(task, 'todoTable');
+	tableData.todos.push(task);
+	
+	saveData();
 };
 
-var createTaskElm = function() {
+var tableIdToDataKey = function(tableId) {
+	if(tableId == 'todoTable') {
+		key = 'todos';
+	}
+	else if(tableId == 'doingTable') {
+		key = 'doings';
+	}
+	else if(tableId == 'doneTable') {
+		key = 'dones';
+	}
+	return key;
+};
+
+var dataKeyToTableId = function(key) {
+	var tableId;
+	if(key == 'todos') {
+		tableId = 'todoTable';
+	}
+	else if(key == 'doings') {
+		tableId = 'doingTable';
+	}
+	else if(key == 'dones') {
+		tableId = 'doneTable';
+	}
+	return tableId;
+};
+
+var createTaskElm = function(task) {
 	var input = document.createElement();
 	
 	var elm = document.createElement('div');
 	elm.className = 'task';
-	elm.innerText = 'new task';
-	elm.id = new Date().getTime();
 	elm.draggable = 'true';
 	elm.addEventListener('dragstart', f_dragstart);
+	elm.id = task.id;
+	elm.task = task;
+	
+	var p = document.createElement('p');
+	p.innerText = task.name;
+	elm.appendChild(p);
+	
+	var deleteButton = document.createElement('div');
+	deleteButton.className = 'deleteButton';
+	deleteButton.innerHTML = '<img src="img/trash_icon24.png" />';
+	deleteButton.addEventListener('click', pressedDeleteButton);
+	elm.appendChild(deleteButton);
+
 	return elm;
-}
+};
 
 /***** ドラッグ開始時の処理 *****/
 function f_dragstart(event){
@@ -118,10 +199,22 @@ function f_drop(event){
 	var id_name = event.dataTransfer.getData("text");
 	//id名からドラッグされた要素を取得
 	var drag_elm =document.getElementById(id_name);
+	
+	if(drag_elm.parentElement == event.currentTarget) {
+		return;
+	}
+	
 	//ドロップ先にドラッグされた要素を追加
 	event.currentTarget.appendChild(drag_elm);
     //エラー回避のため、ドロップ処理の最後にdropイベントをキャンセルしておく
 	event.preventDefault();
+	
+	var task = drag_elm.task;
+	removeTask(task);
+	
+	var key = tableIdToDataKey(event.currentTarget.id);
+	tableData[key].push(task);
+	saveData();
 }
 
 var onload = function() {
@@ -130,6 +223,26 @@ var onload = function() {
 		taskTables[i].addEventListener('dragover', f_dragover);
 		taskTables[i].addEventListener('drop', f_drop);
 	}
+	
+	document.getElementById('addTaskBox').addEventListener('keypress', onKey);
+	
+	loadData();
+	
+	for(var key in tableData) {
+		var tableId = dataKeyToTableId(key);
+		for(var i = 0; i < tableData[key].length; i++) {
+			var task = tableData[key][i];
+			addTaskToTable(task, tableId);
+		}
+	}
+};
+
+var pressedDeleteButton = function() {
+	var elm = this.parentElement;
+	removeTask(elm.task);
+	saveData();
+	
+	elm.parentElement.removeChild(elm);
 };
 
 </script>
