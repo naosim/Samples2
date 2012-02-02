@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" /><title></title>
+<meta charset="UTF-8" />
+<title>タスクかんばん</title>
 <meta name="Keywords"  content="JavaScript,HTML5,CSS" />
 
 <!-- CSS -->
@@ -11,26 +12,28 @@
 	margin:0px;
 }
 body {
-    color: #444;
+    color: rgba(0,0,0,0.5);
     background-color: #EEE;
-    font: 30px sans-serif;
+    background:url("img/kami.jpg");
+    font: 20px sans-serif;
 }
 .header {
 	padding: 4px;
+	padding-top:20px;
 	width: 100%;
 	color: #EEE;
-	background-color: #666;
+	background-color: rgba(0,0,0,0.5);
 	position: fixed;
 	z-index:10;
 }
 .headerMargin {
-	height: 64px;
+	height: 80px;
 }
 .baseTable {
 	height: 200px;
 	width: 99%;
 	border-collapse:collapse;
-	border-color: #888;
+	border-color: rgba(0,0,0,0.3);
 	border-width: 1px;
 	border-spacing: 0px;
 	border-style: solid;
@@ -40,42 +43,36 @@ body {
 	height: 32px;
 }
 .taskTable {
-	background-color:#FFF;
-	border-top-color: #888;
-	border-bottom-color: #CCC;
+	/*background-color:#FFF;*/
+	border-top-color: rgba(0,0,0,0.3);
+	border-bottom-color: rgba(1.0,1.0,1.0,0.7);
 	border-top-width: 2px;
 	border-spacing: 0px;
 	border-style: solid;
 }
-/*
-.task {
-	margin:4px;
-	padding:12px;
-	width: 90%;
-	font-size:18pt;
-	color: #333;
-	background-color:#EEE;
-	cursor: move;
-}
-*/
+
 .task {
 	color: #333;
-    width: 280px;
-    min-height: 100px;
-    margin: 25px auto;
-    padding: 15px;
+	font: 18px sans-serif;
+    width: 120px;
+    min-height: 48px;
+    margin: 12px;
+    padding: 8px;
     background: #f1f3a2;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(247,247,210,1)), to(rgba(240,242,155,1)));
     background: -moz-linear-gradient(top, rgba(247,247,210,1), rgba(240,242,155,1));
     -webkit-box-shadow: 0 2px 12px rgba(0,0,0,.5);
     -moz-box-shadow: 0 2px 12px (rgba(0,0,0.5));
     box-shadow: 0 1px 2px #000;
-    -webkit-transform: rotate(-.5deg);
-    -moz-transform: rotate(-.5deg);
-    -o-transform: rotate(-.5deg);
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
     border-radius: 10px;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
+	float:left;
+	cursor: move;
+	display: inline;
 }
 
 #profile {
@@ -132,7 +129,7 @@ body {
 </style></head>
 <body>
 <!-- HTML -->
-<div class="header">タスクかんばん    タスク追加：<input id="addTaskBox" type="text" /></div>
+<div class="header">タスクかんばん <span style="font-size: 11pt">ver0.1</span>   タスク追加：<input id="addTaskBox" type="text" /><!--<button onclick="pressedAddButton()" width="44px">add</button>--></div>
 <div class="headerMargin"></div>
 <table width="100%" border="1px" class="baseTable">
 	<tr class="tableHeader"><th width="30%">TODO</th><th width="30%">DOING</th><th width="30%">DONE</th></tr>
@@ -164,6 +161,9 @@ The pillows fan.<br>
 </div>
 <!-- javascript -->
 <script type="text/javascript">
+
+////// モデル ///////
+
 /**
  * テーブルの内容を管理するオブジェクト
  * それぞれの配列にタスクIDを持つ
@@ -223,37 +223,9 @@ var removeTask = function(task) {
  */
 var addTaskToTable = function(task, tableId) {
 	var elm = createTaskElm(task);
-	
 	document.getElementById(tableId).appendChild(elm);
 };
 
-var onKey = function(e){
-	if(e.keyCode == 13) {
-		pressedAddButton();
-	}
-};
-
-/**
- * タスク追加ボタンが押された
- * DOMに新しいタスク領域を追加する
- * タスク領域はエディットモードにする
- */
-var pressedAddButton = function() {
-	var task = {
-		id:new Date().getTime(),
-		name:document.getElementById('addTaskBox').value,
-		state:0,
-		todoDate:new Date().getTime(),
-		doingDate:-1,
-		doneDate:-1
-	};
-	addTaskToTable(task, 'todoTable');
-	tableData.todos.push(task);
-	
-	document.getElementById('addTaskBox').value = '';
-	
-	saveData();
-};
 
 var tableIdToDataKey = function(tableId) {
 	if(tableId == 'todoTable') {
@@ -282,9 +254,7 @@ var dataKeyToTableId = function(key) {
 	return tableId;
 };
 
-var createTaskElm = function(task) {
-	var input = document.createElement();
-	
+var createTaskElm = function(task) {	
 	var elm = document.createElement('div');
 	elm.className = 'task';
 	elm.draggable = 'true';
@@ -293,7 +263,7 @@ var createTaskElm = function(task) {
 	elm.task = task;
 	
 	var p = document.createElement('p');
-	p.innerText = task.name;
+	p.innerHTML = task.name;
 	elm.appendChild(p);
 	
 	var deleteButton = document.createElement('div');
@@ -303,6 +273,46 @@ var createTaskElm = function(task) {
 	elm.appendChild(deleteButton);
 
 	return elm;
+};
+
+var init = function() {
+	taskTables = document.getElementsByClassName('taskTable');
+	for(var i = 0; i < taskTables.length; i++) {
+		taskTables[i].addEventListener('dragover', f_dragover);
+		taskTables[i].addEventListener('drop', f_drop);
+	}
+	
+	document.getElementById('addTaskBox').addEventListener('keypress', onKey);
+	
+	loadData();
+	
+	for(var key in tableData) {
+		var tableId = dataKeyToTableId(key);
+		for(var i = 0; i < tableData[key].length; i++) {
+			var task = tableData[key][i];
+			addTaskToTable(task, tableId);
+		}
+	}
+};
+
+
+var info = function() {
+	var popup = document.getElementById('popup');
+	if(popup.style.display == 'block') {
+		popup.style.display = 'none';
+	}
+	else {
+		popup.style.display = 'block';
+	}
+};
+
+//// イベント ///////
+var pressedDeleteButton = function() {
+	var elm = this.parentElement;
+	removeTask(elm.task);
+	saveData();
+	
+	elm.parentElement.removeChild(elm);
 };
 
 /***** ドラッグ開始時の処理 *****/
@@ -341,43 +351,41 @@ function f_drop(event){
 	saveData();
 }
 
-var onload = function() {
-	taskTables = document.getElementsByClassName('taskTable');
-	for(var i = 0; i < taskTables.length; i++) {
-		taskTables[i].addEventListener('dragover', f_dragover);
-		taskTables[i].addEventListener('drop', f_drop);
-	}
-	
-	document.getElementById('addTaskBox').addEventListener('keypress', onKey);
-	
-	loadData();
-	
-	for(var key in tableData) {
-		var tableId = dataKeyToTableId(key);
-		for(var i = 0; i < tableData[key].length; i++) {
-			var task = tableData[key][i];
-			addTaskToTable(task, tableId);
-		}
+var onKey = function(e){
+	if(e.keyCode == 13) {
+		pressedAddButton();
 	}
 };
 
-var pressedDeleteButton = function() {
-	var elm = this.parentElement;
-	removeTask(elm.task);
+/**
+ * タスク追加ボタンが押された
+ * DOMに新しいタスク領域を追加する
+ * タスク領域はエディットモードにする
+ */
+var pressedAddButton = function() {
+	
+	if(document.getElementById('addTaskBox').value.length == 0) {
+		return;
+	}
+	
+	var task = {
+		id:new Date().getTime(),
+		name:document.getElementById('addTaskBox').value,
+		state:0,
+		todoDate:new Date().getTime(),
+		doingDate:-1,
+		doneDate:-1
+	};
+	addTaskToTable(task, 'todoTable');
+	tableData.todos.push(task);
+	
+	document.getElementById('addTaskBox').value = '';
+	
 	saveData();
-	
-	elm.parentElement.removeChild(elm);
 };
 
-var info = function() {
-	var popup = document.getElementById('popup');
-	if(popup.style.display == 'block') {
-		popup.style.display = 'none';
-	}
-	else {
-		popup.style.display = 'block';
-	}
-};
+
+init();
 </script>
 </body>
 </html>
