@@ -30,17 +30,16 @@ body {
 	height: 80px;
 }
 .baseTable {
-	height: 200px;
-	width: 99%;
 	border-collapse:collapse;
-	border-color: rgba(0,0,0,0.3);
-	border-width: 1px;
-	border-spacing: 0px;
-	border-style: solid;
-	margin: 4px;
+	display: -webkit-box;
+  	display: -moz-box;
+ 	width: 90%;
+ 	list-style: none;
+
 }
 .tableHeader {
 	height: 32px;
+	padding:4px;
 }
 .taskTable {
 	border-top-color: rgba(0,0,0,0.3);
@@ -48,14 +47,17 @@ body {
 	border-top-width: 2px;
 	border-spacing: 0px;
 	border-style: solid;
+	width: 33%;
+	padding:0px;
+	list-style: none;
 }
 
 .task {
 	color: #333;
 	font: 18px sans-serif;
-    width: 120px;
+    width: 36%;
     min-height: 48px;
-    margin: 12px;
+    margin: 4%;
     padding: 8px;
     background: #f1f3a2;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(247,247,210,1)), to(rgba(240,242,155,1)));
@@ -132,6 +134,7 @@ body {
 <!-- HTML -->
 <div class="header">タスクかんばん <span style="font-size: 11pt">ver0.1</span>   タスク追加：<input id="addTaskBox" type="text" /><!--<button onclick="pressedAddButton()" width="44px">add</button>--></div>
 <div class="headerMargin"></div>
+<!--
 <table width="100%" border="1px" class="baseTable">
 	<tr class="tableHeader"><th width="30%">TODO</th><th width="30%">DOING</th><th width="30%">DONE</th></tr>
 	<tr>
@@ -140,6 +143,13 @@ body {
 		<td id="doneTable" class="taskTable"></td>
 	</tr>
 </table>
+-->
+<ul class="baseTable">
+  <li id="todoTable" class="taskTable"><div class="tableHeader">TODO</div></li>
+  <li id="doingTable" class="taskTable"><div class="tableHeader">DOING</div></li>
+  <li id="doneTable" class="taskTable"><div class="tableHeader">DONE</div></li>
+</ul>
+
 <!--shinobi1-->
 <script type="text/javascript" src="http://x8.ninpou.jp/ufo/141201204"></script>
 <noscript><a href="http://x8.ninpou.jp/bin/gg?141201204" target="_blank">
