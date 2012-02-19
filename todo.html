@@ -58,7 +58,10 @@ body {
 	font: 18px sans-serif;
     width: 98%;
     min-height: 48px;
-    padding: 2%;
+    padding: 0;    
+    -webkit-transition-property: *;
+	-webkit-transition-duration: 0.3s;
+	-webkit-transition-timing-function: linear;
     
     /*background: #f1f3a2;*/
     -webkit-transform: rotate(0deg);
@@ -67,6 +70,30 @@ body {
 	float:left;
 	cursor: move;
 	display: inline;
+}
+.taskbordertop {
+	background-color:rgba(255,255,255,0.2);
+	height:1px;
+	padding:0;
+	margin:0px;
+}
+
+.taskborderbottom {
+	position:absolute;
+	bottom:0;
+	left:0;
+	background-color:rgba(128,128,128,0.2);
+	height:1px;
+	width:100%;
+	padding:0;
+	margin:0px;
+}
+
+.taskName {
+	padding: 12px;
+	font-weight: bold;
+	color: #FFF;
+	text-shadow: 1px 1px 3px #000;
 }
 
 #profile {
@@ -266,7 +293,16 @@ var createTaskElm = function(task) {
 	elm.id = task.id;
 	elm.task = task;
 	
+	// 上下のバー
+	var bordertop = document.createElement('div');
+	bordertop.className = 'taskbordertop';
+	var borderbottom = document.createElement('div');
+	borderbottom.className = 'taskborderbottom';
+	elm.appendChild(bordertop);
+	elm.appendChild(borderbottom);
+	
 	var p = document.createElement('p');
+	p.className = "taskName";
 	p.innerHTML = task.name;
 	elm.appendChild(p);
 	
@@ -372,24 +408,28 @@ function f_drop(event){
 
 var MAX_COLOR = 9;
 
+var intToHex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
 var resetTaskColor = function() {
 	var todos = document.getElementById('todoTable').childNodes;
 	for(var i = 1; i < todos.length; i++) {
 		var elm = todos[i];
 		var p = Math.floor(i * MAX_COLOR / todos.length);
-		elm.style.background = "#F" + p + "" + p;
+		elm.style.background = "#F" + intToHex[p] + "0";
 	}
 	var doings = document.getElementById('doingTable').childNodes;
 	for(var i = 1; i < doings.length; i++) {
 		var elm = doings[i];
 		var p = Math.floor(i * MAX_COLOR / doings.length);
-		elm.style.background = "#FF" + p;
+		var invP = MAX_COLOR - p + (16 - MAX_COLOR);
+		elm.style.background = "#" + intToHex[invP] + "F0";
 	}
 	var dones = document.getElementById('doneTable').childNodes;
 	for(var i = 1; i < dones.length; i++) {
 		var elm = dones[i];
 		var p = Math.floor(i * MAX_COLOR / dones.length);
-		elm.style.background = "#" + p + "F" + p;
+		var invP = MAX_COLOR - p + (16 - MAX_COLOR);
+		var rest = 16 - MAX_COLOR;
+		elm.style.background = "#0" + intToHex[invP] + "" + intToHex[p];
 	}
 }
 
