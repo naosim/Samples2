@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>見積ポーカー</title>
+	<meta name="author" content="Ste Brennan - Code Computerlove - http://www.codecomputerlove.com/" />
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link href="css/styles.css" type="text/css" rel="stylesheet" />
+	<link href="css/photoswipe.css" type="text/css" rel="stylesheet" />	
+	<script type="text/javascript" src="js/klass.min.js"></script>
+	<script type="text/javascript" src="js/code.photoswipe-3.0.4.min.js"></script>
+
+	<script type="text/javascript">
+
+		(function(window, PhotoSwipe){
+		
+			document.addEventListener('DOMContentLoaded', function(){
+			
+				var
+					options = {},
+					instance = PhotoSwipe.attach( window.document.querySelectorAll('#Gallery a'), options );
+			
+			}, false);
+			
+			
+		}(window, window.Code.PhotoSwipe));
+		
+	</script>
+	
+</head>
+<body>
+
+<div id="Header">
+	みつもりポーカー
+</div>
+
+<div id="MainContent">
+	<ul id="Gallery" class="gallery">
+		<li><a href="img/s01.png"><img src="img/s01.png" alt="1" /></a></li>
+		<li><a href="img/s02.png"><img src="img/s02.png" alt="2" /></a></li>
+		<li><a href="img/s03.png"><img src="img/s03.png" alt="3" /></a></li>
+		<li><a href="img/s05.png"><img src="img/s05.png" alt="5" /></a></li>
+		<li><a href="img/s08.png"><img src="img/s08.png" alt="8" /></a></li>
+		<li><a href="img/s13.png"><img src="img/s13.png" alt="13" /></a></li>
+	</ul>
+	
+</div>	
+
+
+</body>
+</html>
