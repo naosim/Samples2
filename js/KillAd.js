@@ -23,3 +23,7 @@ KillAd.kill = function() {
 };
 
 window.addEventListener('load', KillAd.kill);
+
+function hoge2() {
+	return true;
+}
